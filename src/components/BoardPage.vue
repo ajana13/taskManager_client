@@ -2,7 +2,13 @@
   <div class="board-page-main">
     <template v-if="board">
       <div class="board-title">
-        <h2>{{ board.title }}</h2>
+        <editable
+          v-slot:default="slotProps"
+          :field-value="board.title"
+          @editable-submit="editableSubmitted"
+        >
+          <h2>{{ slotProps.inputText }}</h2>
+        </editable>
       </div>
       <div class="board-lists">
         <div class="board-lists-inner">
@@ -15,10 +21,13 @@
 
 <script>
 import boardService from '../services/board.service'
-// import List from './List'
+import Editable from './Editable'
+import List from './List'
+
 export default {
   components: {
-
+    List,
+    Editable
   },
   data () {
     return {
@@ -38,6 +47,14 @@ export default {
     )
   },
   methods: {
+    editableSubmitted (inputText) {
+      if (inputText === this.board.title) {
+        return
+      }
+      boardService.update(this.board._id, inputText).then(() => {
+        this.board.title = inputText
+      })
+    }
 
   }
 }
