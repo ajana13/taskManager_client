@@ -18,14 +18,14 @@
 </template>
 
 <script>
-import Card from "./Card"
+import Card from './Card'
 export default {
   components: {
     Card
   },
   props: [
-    "listProp",
-    "index"
+    'listProp',
+    'index'
   ],
   data () {
     return {
@@ -34,12 +34,12 @@ export default {
     }
   },
   mounted () {
-    this.$set(this, "list", this.listProp)
-    this.$set(this, "cards", this.listProp.cards)
+    this.$set(this, 'list', this.listProp)
+    this.$set(this, 'cards', this.listProp.cards)
   },
   methods: {
-    
-  },
+
+  }
 }
 </script>
 
