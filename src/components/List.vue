@@ -1,5 +1,15 @@
 <template>
-  <div class="board-list">
+  <div
+    class="board-list"
+    :class="{'is-dragging-list': isDraggingList, 'drag-entered': dragEntered}"
+    draggable="true"
+    @dragstart="onListDragStart(index, $event)"
+    @dragend="onListDragEnd"
+    @drop="onListDrop(index)"
+    @dragover.prevent
+    @dragover="onListDragOver"
+    @dragleave="onListDragLeave"
+  >
     <div class="list-inner">
       <div v-if="list" class="list-title">
         <h3>{{ list.title }}</h3>
@@ -30,7 +40,9 @@ export default {
   data () {
     return {
       list: null,
-      cards: []
+      cards: [],
+      isDraggingList: false,
+      dragEntered: false
     }
   },
   mounted () {
@@ -38,6 +50,28 @@ export default {
     this.$set(this, 'cards', this.listProp.cards)
   },
   methods: {
+    onListDragStart (fromIndex, event) {
+      if (!fromIndex) {
+        fromIndex = 0
+      }
+
+      this.$set(this, 'isDraggingList', true)
+      this.$eventBus.$emit('list-drag-started', fromIndex)
+    },
+    onListDragEnd () {
+      this.$set(this, 'isDraggingList', false)
+      this.$eventBus.$emit('list-dragend')
+    },
+    onListDragOver (event) {
+      this.$set(this, 'dragEntered', true)
+    },
+    onListDragLeave (index, list) {
+      this.$set(this, 'dragEntered', false)
+    },
+    onListDrop (toIndex) {
+      this.$set(this, 'dragEntered', false)
+      this.$eventBus.$emit('list-dropped', toIndex)
+    }
 
   }
 }

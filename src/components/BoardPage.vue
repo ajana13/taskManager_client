@@ -41,11 +41,14 @@ export default {
   data () {
     return {
       board: null,
-      lists: []
+      lists: [],
+      fromListIndex: null
     }
   },
   created () {
-
+    this.$eventBus.$on('list-drag-started', this.onListDragStarted)
+    this.$eventBus.$on('list-dragend', this.onListDragEnd)
+    this.$eventBus.$on('list-dropped', this.onListDropped)
   },
   mounted () {
     boardService.findById(this.$route.params.boardId).then(
@@ -71,8 +74,30 @@ export default {
       listService.create(this.board._id, listTitle).then((newList) => {
         this.board.lists.push(newList)
       })
+    },
+    onListDragStarted (fromListIndex) {
+      this.$set(this, 'fromListIndex', fromListIndex)
+    },
+    onListDragEnd (event) {
+      this.$set(this, 'fromListIndex', null)
+    },
+    onListDropped (toListIndex) {
+      if (this.fromListIndex === toListIndex) {
+        return
+      }
+      this.switchListPositions(this.fromListIndex, toListIndex)
+      this.updateListsOrder()
+    },
+    updateListsOrder () {
+      let listIds = this.lists.map(list => list._id)
+      boardService.updateListsOrder(this.board._id, listIds)
+    },
+    switchListPositions (fromListIndex, toListIndex) {
+      if (this.fromListIndex === null) {
+        return
+      }
+      this.lists.splice(toListIndex, 0, this.lists.splice(fromListIndex, 1)[0])
     }
-
   }
 }
 </script>

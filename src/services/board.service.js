@@ -14,5 +14,14 @@ export default {
                 title: title
             }
         ).then(res => res.data)
+    },
+    updateListsOrder(boardId, listIds) {
+        return axios
+            .put('/api/boards/updateListsOrder', {
+                boardId: boardId,
+                listIds: listIds
+            })
+            .then(res => res.data)
     }
+
 }

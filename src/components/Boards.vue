@@ -15,7 +15,8 @@ export default {
   name: 'Boards',
   data () {
     return {
-      boards: []
+      boards: [],
+      fromListIndex: null
     }
   },
   mounted () {
