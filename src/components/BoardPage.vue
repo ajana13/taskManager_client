@@ -13,7 +13,13 @@
       <div class="board-lists">
         <div class="board-lists-inner">
           <list v-for="(list, i) in lists" :key="list._id" :index="i" :list-prop="list" />
+          <addable class="add-new-list" @addable-submit="addableSubmit">
+            <div>Add list</div>
+          </addable>
         </div>
+        <!-- <addable class="add-new-list" @addable-submit="addableSubmit">
+          <div>Add list</div>
+        </addable>-->
       </div>
     </template>
   </div>
@@ -23,11 +29,14 @@
 import boardService from '../services/board.service'
 import Editable from './Editable'
 import List from './List'
+import listService from '../services/list.service'
+import Addable from './Addable'
 
 export default {
   components: {
     List,
-    Editable
+    Editable,
+    Addable
   },
   data () {
     return {
@@ -53,6 +62,14 @@ export default {
       }
       boardService.update(this.board._id, inputText).then(() => {
         this.board.title = inputText
+      })
+    },
+    addableSubmit (listTitle) {
+      if (!listTitle || listTitle.length === 0) {
+        return
+      }
+      listService.create(this.board._id, listTitle).then((newList) => {
+        this.board.lists.push(newList)
       })
     }
 
